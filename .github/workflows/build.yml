@@ -9,31 +9,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install Python dependencies
+      - name: Install dependencies into packages folder
         run: |
-          pip install --upgrade flet
-          pip install requests lxml
+          pip install --upgrade pip
+          pip install flet requests lxml -t packages
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.6'
-          channel: 'stable'
 
-      - name: Build APK with Flet
-        run: |
-          yes | flet build apk --requirements requirements.txt
+      - name: Build APK
+        run: yes | flet build apk
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: my-apk
           path: build/apk/*.apk
