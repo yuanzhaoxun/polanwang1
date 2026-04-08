@@ -1,3 +1,10 @@
+import sys
+import os
+
+# 将 packages 目录添加到 Python 路径
+packages_dir = os.path.join(os.path.dirname(__file__), 'packages')
+if os.path.exists(packages_dir):
+    sys.path.insert(0, packages_dir)
 # main.py 修复版
 import flet as ft
 import json
