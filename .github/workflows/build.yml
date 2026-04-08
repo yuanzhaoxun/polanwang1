@@ -9,24 +9,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install flet and dependencies (for build)
+      - name: Install flet and dependencies
         run: |
           pip install --upgrade flet
-          # 虽然 flet build 会自己处理 requirements.txt，但预装一下也没坏处
           pip install requests lxml
 
-      - name: Build APK with Flet
-        run: flet build apk
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'  # 兼容性好
+          channel: 'stable'
 
-      - name: Upload APK artifact
+      - name: Build APK
+        run: |
+          # 自动确认所有提示
+          yes | flet build apk
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: my-apk
