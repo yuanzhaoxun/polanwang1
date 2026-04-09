@@ -9,33 +9,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install flet for building (system)
+      - name: Install Python dependencies
         run: |
-          pip install --upgrade flet
-          pip install requests lxml   # 同时也安装到系统，避免后续重复
+          pip install --upgrade pip
+          pip install flet requests lxml
 
-      - name: Install dependencies into packages folder for APK inclusion
-        run: |
-          mkdir -p packages
-          pip install requests lxml -t packages
-          # 注意：flet 本身不需要再复制到 packages，因为 flet 运行时会自己寻找 site-packages？
-          # 但实际上，flet 应用需要 flet 库在手机上运行。所以我们也需要把 flet 安装到 packages。
-          pip install flet -t packages
-
-      - uses: subosito/flutter-action@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.6'
+          flutter-version: '3.19.6'   # 稳定版本，与 Flet 兼容
+          channel: 'stable'
 
       - name: Build APK
-        run: yes | flet build apk
+        run: |
+          yes | flet build apk
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
           name: my-apk
           path: build/apk/*.apk
